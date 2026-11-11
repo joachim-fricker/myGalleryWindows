@@ -1,0 +1,194 @@
+<Page x:Class="MyGallery.Views.PersonenPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:views="clr-namespace:MyGallery.Views"
+      Title="Personen"
+      ScrollViewer.CanContentScroll="False">
+    <Grid Margin="16,8,8,0">
+
+        <!-- Übersicht: Gruppen ("Haupt" immer offen), dann "Ohne Namen" -->
+        <Grid x:Name="OverviewPanel">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <DockPanel Grid.Row="0" Margin="0,0,8,4">
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <ui:Button Margin="0,0,8,0" Content="Personen suchen" Appearance="Primary"
+                               Icon="{ui:SymbolIcon Search24}" Click="OnOpenSearch" />
+                    <ui:Button Margin="0,0,8,0" Content="Reihenfolge …" Icon="{ui:SymbolIcon ArrowSortDown24}" Click="OnEditOrder" />
+                    <ui:Button Content="Gruppen bearbeiten …" Icon="{ui:SymbolIcon PeopleTeam24}" Click="OnEditGroups" />
+                </StackPanel>
+                <StackPanel VerticalAlignment="Center">
+                    <ui:TextBlock x:Name="TitleText" Text="Personen" FontTypography="Subtitle" />
+                    <TextBlock x:Name="SubtitleText" FontSize="12"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                </StackPanel>
+            </DockPanel>
+
+            <ItemsControl x:Name="Rows"
+                          Grid.Row="1"
+                          Focusable="False"
+                          PreviewMouseLeftButtonUp="OnRowsClick"
+                          VirtualizingPanel.IsVirtualizing="True"
+                          VirtualizingPanel.VirtualizationMode="Recycling"
+                          VirtualizingPanel.ScrollUnit="Pixel"
+                          ScrollViewer.CanContentScroll="True">
+                <ItemsControl.Template>
+                    <ControlTemplate TargetType="ItemsControl">
+                        <ScrollViewer x:Name="PART_Scroller" CanContentScroll="True" Focusable="False"
+                                      HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </ControlTemplate>
+                </ItemsControl.Template>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.Resources>
+                    <DataTemplate DataType="{x:Type views:SectionRow}">
+                        <Border Height="{x:Static views:AlbenPage.SectionHeight}"
+                                Background="Transparent"
+                                Cursor="{Binding Cursor}"
+                                Margin="0,0,8,0"
+                                BorderThickness="0,0,0,1"
+                                BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}">
+                            <DockPanel Margin="4,14,8,6">
+                                <TextBlock DockPanel.Dock="Right" Text="{Binding Chevron}"
+                                           FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="14"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Title}" FontSize="20" FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                                    <TextBlock Text="{Binding Subtitle}" FontSize="12"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                </StackPanel>
+                            </DockPanel>
+                        </Border>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type views:PersonCardRow}">
+                        <views:PersonRowView />
+                    </DataTemplate>
+                </ItemsControl.Resources>
+            </ItemsControl>
+
+            <ui:TextBlock x:Name="EmptyText" Grid.Row="1" Visibility="Collapsed" TextAlignment="Center"
+                          HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"
+                          Text="Noch keine Personen.&#x0a;Einstellungen → „Vom Handy importieren“ übernimmt Personen und Gesichter aus der Android-App." />
+        </Grid>
+
+        <!-- Eine Person -->
+        <Grid x:Name="DetailPanel" Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <DockPanel Grid.Row="0" Margin="0,0,8,6">
+                <ui:Button DockPanel.Dock="Left" Margin="0,0,12,0" VerticalAlignment="Center"
+                           Icon="{ui:SymbolIcon ArrowLeft24}" ToolTip="Zurück (Esc)" Click="OnBack" />
+                <views:FaceAvatar x:Name="DetailAvatar" DockPanel.Dock="Left" Width="44" Height="44" Margin="0,0,12,0" />
+
+                <ui:Button x:Name="SortButton" DockPanel.Dock="Right" Margin="8,0,0,0" VerticalAlignment="Center"
+                           Icon="{ui:SymbolIcon ArrowSort24}" Click="OnToggleSort" />
+                <!-- Aktionen für die Person -->
+                <StackPanel x:Name="PersonBar" DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <ui:Button x:Name="ReviewButton" Margin="0,0,8,0" Appearance="Primary" Click="OnReviewSuggestions" />
+                    <ui:Button x:Name="ReviewAutoButton" Margin="0,0,8,0" Content="Automatische prüfen" Click="OnReviewAuto" />
+                    <ui:Button Margin="0,0,8,0" Content="Umbenennen" Icon="{ui:SymbolIcon Rename24}" Click="OnRename" />
+                    <ui:Button x:Name="GroupButton" Margin="0,0,8,0" Content="Gruppe" Icon="{ui:SymbolIcon PeopleTeam24}" Click="OnGroup" />
+                    <ui:Button Margin="0,0,8,0" Content="Zusammenführen …" Icon="{ui:SymbolIcon PeopleSwap24}" Click="OnMerge" />
+                    <ui:Button x:Name="SearchWithButton" Content="Mit weiteren Personen …" Icon="{ui:SymbolIcon Search24}"
+                               Click="OnSearchWith" />
+                </StackPanel>
+                <!-- Aktionen für ausgewählte Bilder -->
+                <StackPanel x:Name="SelectionBar" DockPanel.Dock="Right" Orientation="Horizontal"
+                            VerticalAlignment="Center" Visibility="Collapsed">
+                    <ui:Button x:Name="SelectAllButton" Margin="0,0,8,0" Content="Alle" Click="OnSelectAll" />
+                    <ui:Button x:Name="CoverButton" Margin="0,0,8,0" Content="Als Titelbild" Click="OnCover" />
+                    <ui:Button Margin="0,0,8,0" Content="Andere Person …" Click="OnMoveFaces" />
+                    <ui:Button Content="Entfernen" Appearance="Danger" Icon="{ui:SymbolIcon Delete24}" Click="OnRemoveFaces" />
+                </StackPanel>
+
+                <StackPanel VerticalAlignment="Center">
+                    <ui:TextBlock x:Name="DetailTitle" FontTypography="Subtitle" />
+                    <TextBlock x:Name="DetailSubtitle" FontSize="12" TextTrimming="CharacterEllipsis"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                </StackPanel>
+            </DockPanel>
+            <views:ImageGrid x:Name="DetailGrid" Grid.Row="1" />
+        </Grid>
+
+        <!-- Personen suchen: Bilder, auf denen alle ausgewählten Personen sind -->
+        <Grid x:Name="SearchPanel" Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <DockPanel Grid.Row="0" Margin="0,0,8,6">
+                <ui:Button DockPanel.Dock="Left" Margin="0,0,12,0" VerticalAlignment="Center"
+                           Icon="{ui:SymbolIcon ArrowLeft24}" ToolTip="Zurück (Esc)" Click="OnSearchBack" />
+                <StackPanel VerticalAlignment="Center">
+                    <ui:TextBlock x:Name="SearchTitle" FontTypography="Subtitle" />
+                    <TextBlock x:Name="SearchSubtitle" FontSize="12" TextTrimming="CharacterEllipsis"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                </StackPanel>
+            </DockPanel>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <DockPanel Grid.Column="0" Margin="0,0,12,8">
+                    <StackPanel DockPanel.Dock="Top">
+                        <ui:ToggleSwitch x:Name="OnlyTheseSwitch" Content="Nur diese Personen"
+                                         ToolTip="Keine weiteren benannten Personen auf dem Bild (unbekannte Gesichter stören nicht)"
+                                         Checked="OnSearchOptionChanged" Unchecked="OnSearchOptionChanged" />
+                        <TextBlock Text="Land" Margin="0,10,0,2" FontSize="12"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        <ComboBox x:Name="CountryBox" HorizontalAlignment="Stretch" SelectionChanged="OnSearchOptionChanged" />
+                        <TextBlock Text="Jahr" Margin="0,8,0,2" FontSize="12"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        <ComboBox x:Name="YearBox" HorizontalAlignment="Stretch" SelectionChanged="OnSearchOptionChanged" />
+                        <TextBlock Margin="0,12,0,4" FontSize="12" TextWrapping="Wrap"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                   Text="Personen anklicken. Zahl = Treffer mit dieser Person dazu, ausgegraut = nie zusammen auf einem Bild." />
+                    </StackPanel>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel x:Name="SearchPersons" />
+                    </ScrollViewer>
+                </DockPanel>
+                <views:ImageGrid x:Name="SearchGrid" Grid.Column="1" />
+                <ui:TextBlock x:Name="SearchEmpty" Grid.Column="1" TextAlignment="Center" TextWrapping="Wrap"
+                              HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Grid>
+        </Grid>
+
+        <!-- "Ist das …?" – Gesichter in Runden prüfen -->
+        <Grid x:Name="ReviewPanel" Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <DockPanel Grid.Row="0" Margin="0,0,8,6">
+                <ui:Button DockPanel.Dock="Left" Margin="0,0,12,0" VerticalAlignment="Center"
+                           Icon="{ui:SymbolIcon ArrowLeft24}" ToolTip="Zurück (Esc)" Click="OnReviewBack" />
+                <ui:Button x:Name="ReviewSubmitButton" DockPanel.Dock="Right" Appearance="Primary"
+                           VerticalAlignment="Center" Click="OnReviewSubmit" />
+                <StackPanel VerticalAlignment="Center">
+                    <ui:TextBlock x:Name="ReviewTitle" FontTypography="Subtitle" />
+                    <TextBlock x:Name="ReviewSubtitle" FontSize="12"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                </StackPanel>
+            </DockPanel>
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <WrapPanel x:Name="ReviewFaces" Margin="0,0,8,8" />
+            </ScrollViewer>
+            <ui:TextBlock x:Name="ReviewDone" Grid.Row="1" Visibility="Collapsed" TextAlignment="Center"
+                          HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" />
+        </Grid>
+    </Grid>
+</Page>

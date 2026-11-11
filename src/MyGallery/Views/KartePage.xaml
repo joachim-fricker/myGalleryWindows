@@ -1,0 +1,47 @@
+<Page x:Class="MyGallery.Views.KartePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:views="clr-namespace:MyGallery.Views"
+      xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+      Title="Karte"
+      ScrollViewer.CanContentScroll="False">
+    <Grid Margin="16,8,8,8">
+
+        <!-- Karte mit allen Bildern (Gruppen mit Vorschaubild und Anzahl) -->
+        <Grid x:Name="MapPanel">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <DockPanel Grid.Row="0" Margin="0,0,8,6">
+                <ui:Button x:Name="InViewButton" DockPanel.Dock="Right" Appearance="Primary"
+                           Icon="{ui:SymbolIcon ImageMultiple24}" Content="Bilder im Ausschnitt" Click="OnInView" />
+                <StackPanel VerticalAlignment="Center">
+                    <ui:TextBlock x:Name="TitleText" Text="Karte" FontTypography="Subtitle" />
+                    <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Text="Klick auf eine Gruppe zeigt ihre Bilder, Klick auf ein einzelnes Bild öffnet es." />
+                </StackPanel>
+            </DockPanel>
+            <wv2:WebView2 x:Name="Map" Grid.Row="1" />
+        </Grid>
+
+        <!-- Ausgewählte Bilder -->
+        <Grid x:Name="DetailPanel" Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <DockPanel Grid.Row="0" Margin="0,0,8,6">
+                <ui:Button DockPanel.Dock="Left" Margin="0,0,12,0" VerticalAlignment="Center"
+                           Icon="{ui:SymbolIcon ArrowLeft24}" ToolTip="Zurück zur Karte (Esc)" Click="OnBack" />
+                <StackPanel VerticalAlignment="Center">
+                    <ui:TextBlock x:Name="DetailTitle" FontTypography="Subtitle" />
+                    <TextBlock x:Name="DetailSubtitle" FontSize="12"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                </StackPanel>
+            </DockPanel>
+            <views:ImageGrid x:Name="DetailGrid" Grid.Row="1" />
+        </Grid>
+    </Grid>
+</Page>

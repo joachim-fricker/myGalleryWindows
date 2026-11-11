@@ -1,0 +1,83 @@
+<ui:FluentWindow x:Class="MyGallery.Views.ViewerWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 Title="Bild"
+                 ExtendsContentIntoTitleBar="True"
+                 WindowBackdropType="Mica"
+                 WindowCornerPreference="Round">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ui:TitleBar x:Name="AppTitleBar" Grid.Row="0" Title="Bild" />
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Bildfläche: Mausrad = Zoom, Doppelklick = Zoom an/aus, Ziehen = verschieben -->
+            <Border x:Name="Stage" Grid.Column="0" ClipToBounds="True" Background="Transparent"
+                    MouseWheel="OnWheel"
+                    MouseLeftButtonDown="OnStageDown"
+                    MouseMove="OnStageMove"
+                    MouseLeftButtonUp="OnStageUp">
+                <Image x:Name="Picture" Margin="8" Stretch="Uniform"
+                       RenderOptions.BitmapScalingMode="HighQuality"
+                       RenderTransformOrigin="0,0">
+                    <Image.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform x:Name="Zoom" ScaleX="1" ScaleY="1" />
+                            <TranslateTransform x:Name="Pan" X="0" Y="0" />
+                        </TransformGroup>
+                    </Image.RenderTransform>
+                </Image>
+            </Border>
+            <ui:ProgressRing x:Name="Busy" Grid.Column="0" IsIndeterminate="True" Visibility="Collapsed"
+                             IsHitTestVisible="False" />
+
+            <!-- Details (ⓘ) -->
+            <Border x:Name="InfoPanel" Grid.Column="1" Width="340" Visibility="Collapsed"
+                    BorderThickness="1,0,0,0"
+                    BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                    Background="{DynamicResource LayerFillColorDefaultBrush}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16,8,16,16">
+                    <StackPanel x:Name="InfoList" />
+                </ScrollViewer>
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="2" Margin="12,6,12,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <ui:Button x:Name="PrevButton" Grid.Column="0" Icon="{ui:SymbolIcon ChevronLeft24}"
+                       ToolTip="Vorheriges (Pfeil links)" Click="OnPrev" />
+            <TextBlock x:Name="Caption" Grid.Column="1" Margin="12,0" VerticalAlignment="Center"
+                       HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"
+                       Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+            <ui:Button x:Name="FavButton" Grid.Column="2" Margin="0,0,8,0" ToolTip="Favorit (F)" Click="OnFavorite" />
+            <ui:Button x:Name="InfoButton" Grid.Column="3" Margin="0,0,8,0" Icon="{ui:SymbolIcon Info24}"
+                       ToolTip="Details (I)" Click="OnInfo" />
+            <ui:Button Grid.Column="4" Margin="0,0,8,0" Icon="{ui:SymbolIcon Share24}"
+                       ToolTip="Teilen (Strg+S)" Click="OnShare" />
+            <ui:Button Grid.Column="5" Margin="0,0,8,0" Icon="{ui:SymbolIcon Print24}"
+                       ToolTip="Drucken (Strg+P)" Click="OnPrint" />
+            <ui:Button Grid.Column="6" Margin="0,0,8,0" Content="Im Explorer zeigen"
+                       Icon="{ui:SymbolIcon Folder24}" Click="OnShowInExplorer" />
+            <ui:Button x:Name="NextButton" Grid.Column="7" Icon="{ui:SymbolIcon ChevronRight24}"
+                       ToolTip="Nächstes (Pfeil rechts)" Click="OnNext" />
+        </Grid>
+    </Grid>
+</ui:FluentWindow>

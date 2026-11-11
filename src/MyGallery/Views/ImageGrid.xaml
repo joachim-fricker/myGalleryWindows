@@ -1,0 +1,72 @@
+<UserControl x:Class="MyGallery.Views.ImageGrid"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="clr-namespace:MyGallery.Views">
+  <Grid>
+    <ItemsControl x:Name="Rows"
+                  Focusable="False"
+                  PreviewMouseLeftButtonUp="OnRowsClick"
+                  PreviewMouseRightButtonUp="OnRowsRightClick"
+                  VirtualizingPanel.IsVirtualizing="True"
+                  VirtualizingPanel.VirtualizationMode="Recycling"
+                  VirtualizingPanel.ScrollUnit="Pixel"
+                  VirtualizingPanel.CacheLengthUnit="Page"
+                  VirtualizingPanel.CacheLength="1,2"
+                  ScrollViewer.CanContentScroll="True">
+        <ItemsControl.Template>
+            <ControlTemplate TargetType="ItemsControl">
+                <ScrollViewer x:Name="PART_Scroller"
+                              CanContentScroll="True"
+                              Focusable="False"
+                              PanningMode="VerticalOnly"
+                              HorizontalScrollBarVisibility="Disabled"
+                              VerticalScrollBarVisibility="Visible">
+                    <ItemsPresenter />
+                </ScrollViewer>
+            </ControlTemplate>
+        </ItemsControl.Template>
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <VirtualizingStackPanel />
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.Resources>
+            <!-- Monats-Überschrift -->
+            <DataTemplate DataType="{x:Type views:HeaderRow}">
+                <TextBlock Text="{Binding Label}"
+                           Height="{x:Static views:ImageGrid.HeaderHeight}"
+                           Padding="4,16,0,0"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+            </DataTemplate>
+            <!-- Eine Zeile Vorschaubilder (feste Höhe, Kinder werden wiederverwendet) -->
+            <DataTemplate DataType="{x:Type views:ThumbRow}">
+                <views:ThumbRowView />
+            </DataTemplate>
+        </ItemsControl.Resources>
+    </ItemsControl>
+
+    <!-- Jahresmarken neben der Scrollbar (beim Scrollen sichtbar) -->
+    <Canvas x:Name="YearMarks" IsHitTestVisible="False" Opacity="0" />
+
+    <!-- Monat/Jahr an der Position des Scrollbalkens -->
+    <Border x:Name="Bubble"
+            IsHitTestVisible="False"
+            Opacity="0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Margin="0,4,22,0"
+            Padding="12,5"
+            CornerRadius="14"
+            Background="{DynamicResource AccentFillColorDefaultBrush}">
+        <Border.RenderTransform>
+            <!-- Verschieben ohne Layout-Durchgang -->
+            <TranslateTransform x:Name="BubbleShift" />
+        </Border.RenderTransform>
+        <TextBlock x:Name="BubbleText"
+                   FontWeight="SemiBold"
+                   Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}" />
+    </Border>
+  </Grid>
+</UserControl>

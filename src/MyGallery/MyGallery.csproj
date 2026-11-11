@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <!-- Windows-SDK-Version für den Teilen-Dialog (DataTransferManager) -->
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>MyGallery</RootNamespace>
+    <AssemblyName>MyGallery</AssemblyName>
+    <!-- Icon der Android-App (Polaroid mit Bergen und "JF") -->
+    <ApplicationIcon>app.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WPF-UI" Version="4.*" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.*" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.*" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\**\*" CopyToOutputDirectory="PreserveNewest" />
+    <Resource Include="app.ico" />
+  </ItemGroup>
+
+</Project>

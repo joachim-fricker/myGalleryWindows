@@ -1,0 +1,35 @@
+<Page x:Class="MyGallery.Views.AlleBilderPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:views="clr-namespace:MyGallery.Views"
+      Title="Alle"
+      ScrollViewer.CanContentScroll="False">
+    <Grid Margin="16,8,8,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" Margin="0,0,8,4">
+            <ui:Button DockPanel.Dock="Right" Icon="{ui:SymbolIcon ArrowSync24}" ToolTip="Aktualisieren"
+                       Click="OnRefresh" />
+            <ui:Button x:Name="SortButton" DockPanel.Dock="Right" Margin="0,0,8,0"
+                       Icon="{ui:SymbolIcon ArrowSort24}" Click="OnToggleSort" />
+            <ui:TextBlock x:Name="TitleText" Text="Alle Bilder" FontTypography="Subtitle" VerticalAlignment="Center" />
+        </DockPanel>
+
+        <!-- Fortschritt / Fehler (wie ScanBanner in der Android-App) -->
+        <StackPanel x:Name="StatusPanel" Grid.Row="1" Margin="0,0,8,6" Visibility="Collapsed">
+            <TextBlock x:Name="StatusText" FontSize="12" TextWrapping="Wrap"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+            <ProgressBar x:Name="StatusProgress" Height="3" Margin="0,3,0,0" />
+        </StackPanel>
+
+        <views:ImageGrid x:Name="Gallery" Grid.Row="2" />
+
+        <ui:TextBlock x:Name="EmptyText" Grid.Row="2" Visibility="Collapsed" TextAlignment="Center"
+                      HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" />
+    </Grid>
+</Page>

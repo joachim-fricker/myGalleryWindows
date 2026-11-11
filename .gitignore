@@ -1,0 +1,14 @@
+# Visual Studio / .NET
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.swp
+*.log
+TestResults/
+publish/
+# lokale Daten
+*.db
+*.db-shm
+*.db-wal
